@@ -62,15 +62,25 @@ val ctr256_encrypt(std::string data,
         throw std::range_error("state must be in the range 0..15");
     }
 
-    uint8_t* out =
-        ctr256((const uint8_t*)&data[0], data.length(), (const uint8_t*)&key[0],
-               (uint8_t*)&iv[0], (uint8_t*)&state[0]);
+    uint8_t datap[data.length()];
+    data.copy((char*)datap, data.length());
+
+    uint8_t keyp[32];
+    key.copy((char*)keyp, 32);
+
+    uint8_t ivp[16];
+    iv.copy((char*)ivp, 16);
+
+    uint8_t statep[1];
+    state.copy((char*)statep, 1);
+
+    uint8_t* out = ctr256(datap, data.length(), keyp, ivp, statep);
 
     std::vector<memory_view<uint8_t>> result;
 
     result.push_back(typed_memory_view(data.length(), out));
-    result.push_back(typed_memory_view(16, (uint8_t*)&iv[0]));
-    result.push_back(typed_memory_view(1, (uint8_t*)&state[0]));
+    result.push_back(typed_memory_view(16, ivp));
+    result.push_back(typed_memory_view(1, statep));
 
     return val::array(result);
 }
