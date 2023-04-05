@@ -27,9 +27,19 @@ val ige(std::string data, std::string key, std::string iv, bool encrypt) {
         throw std::length_error("iv must be 32 bytes");
     }
 
-    uint8_t* out =
-        ige256((const uint8_t*)&data[0], data.length(), (const uint8_t*)&key[0],
-               (const uint8_t*)&iv[0], encrypt);
+    uint8_t datap[data.length()];
+    data.copy((char*)datap, data.length());
+
+    uint8_t keyp[32];
+    key.copy((char*)keyp, 32);
+
+    uint8_t ivp[16];
+    iv.copy((char*)ivp, 16);
+
+    uint8_t* out = ige256(datap, data.length(), keyp, ivp, encrypt);
+
+    free(keyp);
+    free(ivp);
 
     return val(typed_memory_view(data.length(), out));
 }
@@ -76,6 +86,9 @@ val ctr256_encrypt(std::string data,
 
     uint8_t* out = ctr256(datap, data.length(), keyp, ivp, statep);
 
+    free(keyp);
+    free(datap);
+
     std::vector<memory_view<uint8_t>> result;
 
     result.push_back(typed_memory_view(data.length(), out));
@@ -99,8 +112,19 @@ val cbc(std::string data, std::string key, std::string iv, bool encrypt) {
         throw std::length_error("iv must be 16 bytes");
     }
 
-    uint8_t* out = cbc256((const uint8_t*)&data[0], data.length(),
-                          (const uint8_t*)&key[0], (uint8_t*)&iv[0], encrypt);
+    uint8_t datap[data.length()];
+    data.copy((char*)datap, data.length());
+
+    uint8_t keyp[32];
+    key.copy((char*)keyp, 32);
+
+    uint8_t ivp[16];
+    iv.copy((char*)ivp, 16);
+
+    uint8_t* out = cbc256(datap, data.length(), keyp, ivp, encrypt);
+
+    free(keyp);
+    free(ivp);
 
     return val(typed_memory_view(data.length(), out));
 }
