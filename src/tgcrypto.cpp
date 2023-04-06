@@ -27,19 +27,8 @@ val ige(std::string data, std::string key, std::string iv, bool encrypt) {
         throw std::length_error("iv must be 32 bytes");
     }
 
-    uint8_t datap[data.length()];
-    data.copy((char*)datap, data.length());
-
-    uint8_t keyp[32];
-    key.copy((char*)keyp, 32);
-
-    uint8_t ivp[16];
-    iv.copy((char*)ivp, 16);
-
-    uint8_t* out = ige256(datap, data.length(), keyp, ivp, encrypt);
-
-    free(keyp);
-    free(ivp);
+    uint8_t* out = ige256((uint8_t*)data.c_str(), data.length(),
+                          (uint8_t*)key.c_str(), (uint8_t*)iv.c_str(), encrypt);
 
     return val(typed_memory_view(data.length(), out));
 }
@@ -72,28 +61,15 @@ val ctr256_encrypt(std::string data,
         throw std::range_error("state must be in the range 0..15");
     }
 
-    uint8_t datap[data.length()];
-    data.copy((char*)datap, data.length());
-
-    uint8_t keyp[32];
-    key.copy((char*)keyp, 32);
-
-    uint8_t ivp[16];
-    iv.copy((char*)ivp, 16);
-
-    uint8_t statep[1];
-    state.copy((char*)statep, 1);
-
-    uint8_t* out = ctr256(datap, data.length(), keyp, ivp, statep);
-
-    free(keyp);
-    free(datap);
+    uint8_t* out =
+        ctr256((uint8_t*)data.c_str(), data.length(), (uint8_t*)key.c_str(),
+               (uint8_t*)iv.c_str(), (uint8_t*)state.c_str());
 
     std::vector<memory_view<uint8_t>> result;
 
     result.push_back(typed_memory_view(data.length(), out));
-    result.push_back(typed_memory_view(16, ivp));
-    result.push_back(typed_memory_view(1, statep));
+    result.push_back(typed_memory_view(16, (uint8_t*)iv.c_str()));
+    result.push_back(typed_memory_view(1, (uint8_t*)state.c_str()));
 
     return val::array(result);
 }
@@ -112,19 +88,8 @@ val cbc(std::string data, std::string key, std::string iv, bool encrypt) {
         throw std::length_error("iv must be 16 bytes");
     }
 
-    uint8_t datap[data.length()];
-    data.copy((char*)datap, data.length());
-
-    uint8_t keyp[32];
-    key.copy((char*)keyp, 32);
-
-    uint8_t ivp[16];
-    iv.copy((char*)ivp, 16);
-
-    uint8_t* out = cbc256(datap, data.length(), keyp, ivp, encrypt);
-
-    free(keyp);
-    free(ivp);
+    uint8_t* out = cbc256((uint8_t*)data.c_str(), data.length(),
+                          (uint8_t*)key.c_str(), (uint8_t*)iv.c_str(), encrypt);
 
     return val(typed_memory_view(data.length(), out));
 }
