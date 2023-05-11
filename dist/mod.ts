@@ -4,8 +4,8 @@ import { default as init_ } from "./tgcrypto.js";
 let module: any;
 const promise = init_().then((v) => module = v);
 
-export function init() {
-  return promise;
+export async function init() {
+  await promise;
 }
 
 /**
