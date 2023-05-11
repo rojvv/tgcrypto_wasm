@@ -11,6 +11,6 @@ add_executable(tgcrypto ${TGCRYPTO_SOURCES} src/tgcrypto.cpp)
 set_target_properties(
     tgcrypto
     PROPERTIES
-    LINK_FLAGS "-lembind -s SINGLE_FILE=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s EXPORT_ES6=1 -O3"
+    LINK_FLAGS "-lembind -s SINGLE_FILE=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s EXPORT_ES6=1 -O3 -sWASM_BIGINT" 
     RUNTIME_OUTPUT_DIRECTORY "dist/"
 )

@@ -90,3 +90,8 @@ export function cbc256Decrypt(
 ): Uint8Array {
   return module.cbc256Decrypt(data, key, iv);
 }
+
+export function factorize(pq: bigint): [bigint, bigint] {
+  const vector = module.factorize(pq);
+  return [vector.get(0), vector.get(1)];
+}
