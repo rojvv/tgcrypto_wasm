@@ -1,6 +1,12 @@
-import init from "./tgcrypto.js";
+import { default as init_ } from "./tgcrypto.js";
 
-const module = await init();
+// deno-lint-ignore no-explicit-any
+let module: any;
+const promise = init_().then((v) => module = v);
+
+export function init() {
+  return promise;
+}
 
 /**
  * Performs IGE-256 encryption.
