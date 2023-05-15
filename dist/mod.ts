@@ -1,8 +1,8 @@
 import { default as init_ } from "./tgcrypto.js";
 
 // deno-lint-ignore no-explicit-any
-let module: any;
-const promise = init_().then((v) => module = v);
+let module_: any;
+const promise = init_().then((v) => module_ = v);
 
 export async function init() {
   await promise;
@@ -20,7 +20,7 @@ export function ige256Encrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return module.ige256Encrypt(data, key, iv);
+  return module_.ige256Encrypt(data, key, iv);
 }
 
 /**
@@ -35,7 +35,7 @@ export function ige256Decrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return module.ige256Decrypt(data, key, iv);
+  return module_.ige256Decrypt(data, key, iv);
 }
 
 /**
@@ -52,7 +52,7 @@ export function ctr256Encrypt(
   iv: Uint8Array,
   state: Uint8Array,
 ): [Uint8Array, Uint8Array, Uint8Array] {
-  return module.ctr256Encrypt(data, key, iv, state);
+  return module_.ctr256Encrypt(data, key, iv, state);
 }
 
 /**
@@ -64,7 +64,7 @@ export function ctr256Decrypt(
   iv: Uint8Array,
   state: Uint8Array,
 ): [Uint8Array, Uint8Array, Uint8Array] {
-  return module.ctr256Decrypt(data, key, iv, state);
+  return module_.ctr256Decrypt(data, key, iv, state);
 }
 
 /**
@@ -79,7 +79,7 @@ export function cbc256Encrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return module.cbc256Encrypt(data, key, iv);
+  return module_.cbc256Encrypt(data, key, iv);
 }
 
 /**
@@ -94,10 +94,10 @@ export function cbc256Decrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return module.cbc256Decrypt(data, key, iv);
+  return module_.cbc256Decrypt(data, key, iv);
 }
 
 export function factorize(pq: bigint): [bigint, bigint] {
-  const vector = module.factorize(pq);
+  const vector = module_.factorize(pq);
   return [vector.get(0), vector.get(1)];
 }
