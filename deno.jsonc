@@ -1,0 +1,5 @@
+{
+  "fmt": {
+    "include": ["dist/mod.ts", "dist/node/mod.ts"]
+  }
+}
