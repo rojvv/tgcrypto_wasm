@@ -33,7 +33,11 @@ val ige(std::string data, std::string key, std::string iv, bool encrypt) {
                reinterpret_cast<const uint8_t*>(key.c_str()),
                reinterpret_cast<const uint8_t*>(iv.c_str()), encrypt);
 
-    return val(typed_memory_view(data.length(), out));
+    std::vector<uint8_t> outv(data.length());
+    memcpy(outv.data(), &out[0], data.length());
+    free(out);
+
+    return val(outv);
 }
 
 val ige256_encrypt(std::string data, std::string key, std::string iv) {
@@ -64,21 +68,26 @@ val ctr256_encrypt(std::string data,
         throw std::range_error("state must be in the range 0..15");
     }
 
-    auto ivp = (char*)malloc(16);
-    iv.copy(ivp, 16);
+    std::vector<uint8_t> ivp(16);
+    memcpy(ivp.data(), &iv[0], 16);
 
-    auto statep = (char*)malloc(1);
-    state.copy(statep, 1);
+    std::vector<uint8_t> statep(1);
+    memcpy(statep.data(), &state[0], 1);
 
-    auto out = ctr256(
-        reinterpret_cast<const uint8_t*>(data.c_str()), data.length(),
-        reinterpret_cast<const uint8_t*>(key.c_str()),
-        reinterpret_cast<uint8_t*>(ivp), reinterpret_cast<uint8_t*>(statep));
-    std::vector<memory_view<uint8_t>> result;
+    auto out =
+        ctr256(reinterpret_cast<const uint8_t*>(data.c_str()), data.length(),
+               reinterpret_cast<const uint8_t*>(key.c_str()), ivp.data(),
+               statep.data());
 
-    result.push_back(typed_memory_view(data.length(), out));
-    result.push_back(typed_memory_view(16, reinterpret_cast<uint8_t*>(ivp)));
-    result.push_back(typed_memory_view(1, reinterpret_cast<uint8_t*>(statep)));
+    std::vector<uint8_t> outv(data.length());
+    memcpy(outv.data(), &out[0], data.length());
+    free(out);
+
+    std::vector<val> result;
+
+    result.push_back(val(outv));
+    result.push_back(val(ivp));
+    result.push_back(val(statep));
 
     return val::array(result);
 }
@@ -102,7 +111,11 @@ val cbc(std::string data, std::string key, std::string iv, bool encrypt) {
                reinterpret_cast<const uint8_t*>(key.c_str()),
                (uint8_t*)(iv.c_str()), encrypt);
 
-    return val(typed_memory_view(data.length(), out));
+    std::vector<uint8_t> outv(data.length());
+    memcpy(outv.data(), &out[0], data.length());
+    free(out);
+
+    return val(outv);
 }
 
 val cbc256_encrypt(std::string data, std::string key, std::string iv) {
@@ -147,7 +160,8 @@ val factorize(int64_t pq) {
 }
 
 EMSCRIPTEN_BINDINGS(my_module) {
-    register_vector<int64_t>("Int64Vector");
+    register_vector<uint8_t>("vector<uint8_t>");
+    register_vector<int64_t>("vector<int64_t>");
 
     function("ige256Encrypt", &ige256_encrypt);
     function("ige256Decrypt", &ige256_decrypt);
