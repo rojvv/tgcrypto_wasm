@@ -5,10 +5,12 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 
-#include "aes256.h"
-#include "cbc256.h"
-#include "ctr256.h"
-#include "ige256.h"
+extern "C" {
+#include <aes256.h>
+#include <cbc256.h>
+#include <ctr256.h>
+#include <ige256.h>
+}
 
 using namespace emscripten;
 
@@ -46,12 +48,12 @@ val ige256_decrypt(std::string data, std::string key, std::string iv) {
     return ige(data, key, iv, false);
 }
 #include <iostream>
-val ctr256_encrypt(val data,
+val ctr256_encrypt(std::string data,
+                   val set,
                    std::string key,
                    std::string iv,
                    std::string state) {
-    auto length = data["byteLength"].as<size_t>();
-    if (length == 0) {
+    if (data.length() == 0) {
         throw std::length_error("data must not be empty");
     }
     if (key.length() != 32) {
@@ -73,7 +75,11 @@ val ctr256_encrypt(val data,
     std::vector<uint8_t> statep(1);
     memcpy(statep.data(), &state[0], 1);
 
-    ctr256(&data, length, reinterpret_cast<const uint8_t*>(key.c_str()), ivp.data(), statep.data());
+    ctr256(reinterpret_cast<uint8_t*>(&data[0]), data.length(),
+           reinterpret_cast<const uint8_t*>(key.c_str()), ivp.data(),
+           statep.data());
+
+    set.call<void>("set", typed_memory_view(data.length(), data.data()));
 
     std::vector<val> result;
 
@@ -150,6 +156,10 @@ val factorize(int64_t pq) {
     return val(result);
 }
 
+void test(char* s) {
+    s[0] = 1;
+}
+
 EMSCRIPTEN_BINDINGS(my_module) {
     register_vector<uint8_t>("vector<uint8_t>");
     register_vector<int64_t>("vector<int64_t>");
@@ -161,4 +171,5 @@ EMSCRIPTEN_BINDINGS(my_module) {
     function("cbc256Encrypt", &cbc256_encrypt);
     function("cbc256Decrypt", &cbc256_decrypt);
     function("factorize", &factorize);
+    function("test", &test, allow_raw_pointers());
 }

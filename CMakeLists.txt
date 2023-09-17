@@ -3,7 +3,7 @@ project("tgcrypto_wasm")
 
 include_directories(third_party/tgcrypto/tgcrypto)
 
-file(GLOB TGCRYPTO_SOURCES src/*256.cpp)
+file(GLOB TGCRYPTO_SOURCES third_party/tgcrypto/*256.cpp)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
 
