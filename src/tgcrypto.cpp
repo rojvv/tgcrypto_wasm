@@ -47,7 +47,7 @@ val ige256_encrypt(std::string data, std::string key, std::string iv) {
 val ige256_decrypt(std::string data, std::string key, std::string iv) {
     return ige(data, key, iv, false);
 }
-#include <iostream>
+
 val ctr256_encrypt(std::string data,
                    val set,
                    std::string key,
