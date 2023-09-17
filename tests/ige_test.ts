@@ -1,5 +1,7 @@
-import { ige256Decrypt, ige256Encrypt } from "../dist/mod.ts";
+import { ige256Decrypt, ige256Encrypt, init } from "../dist/mod.ts";
 import { assertEquals } from "./deps.ts";
+
+await init()
 
 const DATA_SIZE = 64;
 const KEY_SIZE = 32;

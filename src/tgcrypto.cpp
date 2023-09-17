@@ -5,12 +5,10 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 
-extern "C" {
-#include <aes256.h>
-#include <cbc256.h>
-#include <ctr256.h>
-#include <ige256.h>
-}
+#include "aes256.h"
+#include "cbc256.h"
+#include "ctr256.h"
+#include "ige256.h"
 
 using namespace emscripten;
 
@@ -47,12 +45,13 @@ val ige256_encrypt(std::string data, std::string key, std::string iv) {
 val ige256_decrypt(std::string data, std::string key, std::string iv) {
     return ige(data, key, iv, false);
 }
-
-val ctr256_encrypt(std::string data,
+#include <iostream>
+val ctr256_encrypt(val data,
                    std::string key,
                    std::string iv,
                    std::string state) {
-    if (data.length() == 0) {
+    auto length = data["byteLength"].as<size_t>();
+    if (length == 0) {
         throw std::length_error("data must not be empty");
     }
     if (key.length() != 32) {
@@ -74,18 +73,10 @@ val ctr256_encrypt(std::string data,
     std::vector<uint8_t> statep(1);
     memcpy(statep.data(), &state[0], 1);
 
-    auto out =
-        ctr256(reinterpret_cast<const uint8_t*>(data.c_str()), data.length(),
-               reinterpret_cast<const uint8_t*>(key.c_str()), ivp.data(),
-               statep.data());
-
-    std::vector<uint8_t> outv(data.length());
-    memcpy(outv.data(), &out[0], data.length());
-    free(out);
+    ctr256(&data, length, reinterpret_cast<const uint8_t*>(key.c_str()), ivp.data(), statep.data());
 
     std::vector<val> result;
 
-    result.push_back(val(outv));
     result.push_back(val(ivp));
     result.push_back(val(statep));
 

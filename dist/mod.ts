@@ -61,7 +61,7 @@ export function ctr256Encrypt(
   key: Uint8Array,
   iv: Uint8Array,
   state: Uint8Array,
-): [Uint8Array, Uint8Array, Uint8Array] {
+): [Uint8Array, Uint8Array] {
   const r = module_.ctr256Encrypt(data, key, iv, state);
   return r.map(collectVector);
 }
@@ -74,7 +74,7 @@ export function ctr256Decrypt(
   key: Uint8Array,
   iv: Uint8Array,
   state: Uint8Array,
-): [Uint8Array, Uint8Array, Uint8Array] {
+): [Uint8Array, Uint8Array] {
   const r = module_.ctr256Decrypt(data, key, iv, state);
   return r.map(collectVector);
 }

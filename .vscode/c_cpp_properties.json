@@ -4,7 +4,7 @@
       "name": "Linux",
       "includePath": [
         "${workspaceFolder}/**",
-        "/home/roj/emsdk/upstream/emscripten/system/include/**"
+        "/home/roj/Projects/emsdk/upstream/emscripten/system/include/**"
       ],
       "defines": [],
       "compilerPath": "/usr/bin/clang",
