@@ -97,7 +97,7 @@ export function cbc256Encrypt(
 
 /**
  * Performs CBC-256 decryption.
- * return data
+ * 
  * @param data The encrypted data, larger than a byte, divisible by 16
  * @param key 32-byte encryption key
  * @param iv 16-byte initialization vector
