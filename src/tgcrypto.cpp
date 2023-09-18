@@ -75,7 +75,7 @@ val ctr256_encrypt(std::string data,
     std::vector<uint8_t> statep(1);
     memcpy(statep.data(), &state[0], 1);
 
-    ctr256(reinterpret_cast<uint8_t*>(&data[0]), data.length(),
+    ctr256(reinterpret_cast<uint8_t*>(data.data()), data.length(),
            reinterpret_cast<const uint8_t*>(key.c_str()), ivp.data(),
            statep.data());
 
@@ -89,7 +89,11 @@ val ctr256_encrypt(std::string data,
     return val::array(result);
 }
 
-val cbc(std::string data, std::string key, std::string iv, bool encrypt) {
+void cbc(std::string data,
+        val set,
+        std::string key,
+        std::string iv,
+        bool encrypt) {
     if (data.length() == 0) {
         throw std::length_error("data must not be empty");
     }
@@ -103,24 +107,19 @@ val cbc(std::string data, std::string key, std::string iv, bool encrypt) {
         throw std::length_error("iv must be 16 bytes");
     }
 
-    auto out =
-        cbc256(reinterpret_cast<const uint8_t*>(data.c_str()), data.length(),
-               reinterpret_cast<const uint8_t*>(key.c_str()),
-               (uint8_t*)(iv.c_str()), encrypt);
+    cbc256(reinterpret_cast<const uint8_t*>(data.data()), data.length(),
+           reinterpret_cast<const uint8_t*>(key.c_str()),
+           (uint8_t*)(iv.c_str()), encrypt);
 
-    std::vector<uint8_t> outv(data.length());
-    memcpy(outv.data(), &out[0], data.length());
-    free(out);
-
-    return val(outv);
+    set.call<void>("set", typed_memory_view(data.length(), data.data()));
 }
 
-val cbc256_encrypt(std::string data, std::string key, std::string iv) {
-    return cbc(data, key, iv, true);
+void cbc256_encrypt(std::string data, val set, std::string key, std::string iv) {
+    cbc(data, set, key, iv, true);
 }
 
-val cbc256_decrypt(std::string data, std::string key, std::string iv) {
-    return cbc(data, key, iv, false);
+void cbc256_decrypt(std::string data, val set, std::string key, std::string iv) {
+    cbc(data, set, key, iv, false);
 }
 
 // Source: https://t.me/c/1147847827/52532
@@ -156,10 +155,6 @@ val factorize(int64_t pq) {
     return val(result);
 }
 
-void test(char* s) {
-    s[0] = 1;
-}
-
 EMSCRIPTEN_BINDINGS(my_module) {
     register_vector<uint8_t>("vector<uint8_t>");
     register_vector<int64_t>("vector<int64_t>");
@@ -171,5 +166,4 @@ EMSCRIPTEN_BINDINGS(my_module) {
     function("cbc256Encrypt", &cbc256_encrypt);
     function("cbc256Decrypt", &cbc256_decrypt);
     function("factorize", &factorize);
-    function("test", &test, allow_raw_pointers());
 }
