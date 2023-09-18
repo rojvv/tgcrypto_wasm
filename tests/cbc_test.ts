@@ -1,7 +1,7 @@
 import { cbc256Decrypt, cbc256Encrypt, init } from "../dist/mod.ts";
 import { assertEquals } from "./deps.ts";
 
-await init()
+await init();
 
 const DATA_SIZE = 64;
 const KEY_SIZE = 32;

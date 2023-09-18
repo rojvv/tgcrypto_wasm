@@ -1,7 +1,7 @@
-import { factorize , init} from "../dist/mod.ts";
+import { factorize, init } from "../dist/mod.ts";
 import { assertEquals } from "./deps.ts";
 
-await init()
+await init();
 
 Deno.test("factorize", async (t) => {
   await t.step("1", () => {

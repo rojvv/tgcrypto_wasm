@@ -1,5 +1,6 @@
 {
+  "lock": false,
   "fmt": {
-    "include": ["dist/mod.ts", "dist/node/mod.ts"]
+    "include": ["dist/mod.ts", "dist/node/mod.ts", "tests/"]
   }
 }

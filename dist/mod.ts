@@ -91,12 +91,13 @@ export function cbc256Encrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return collectVector(module_.cbc256Encrypt(data, key, iv));
+  module_.cbc256Encrypt(data, data, key, iv);
+  return data;
 }
 
 /**
  * Performs CBC-256 decryption.
- *
+ * return data
  * @param data The encrypted data, larger than a byte, divisible by 16
  * @param key 32-byte encryption key
  * @param iv 16-byte initialization vector
@@ -106,7 +107,8 @@ export function cbc256Decrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return collectVector(module_.cbc256Decrypt(data, key, iv));
+  module_.cbc256Decrypt(data, data, key, iv);
+  return data;
 }
 
 export function factorize(pq: bigint): [bigint, bigint] {

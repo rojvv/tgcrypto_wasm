@@ -1,6 +1,8 @@
-import { ctr256Decrypt, ctr256Encrypt , init} from "../dist/mod.ts";
+import { ctr256Decrypt, ctr256Encrypt, init } from "../dist/mod.ts";
 import { assertEquals } from "./deps.ts";
-await init()
+
+await init();
+
 const DATA_SIZE = 64;
 const KEY_SIZE = 32;
 const IV_SIZE = 16;
