@@ -1,5 +1,7 @@
-import { ctr256Decrypt, ctr256Encrypt } from "../dist/mod.ts";
+import { ctr256Decrypt, ctr256Encrypt, init } from "../dist/mod.ts";
 import { assertEquals } from "./deps.ts";
+
+await init();
 
 const DATA_SIZE = 64;
 const KEY_SIZE = 32;
@@ -15,31 +17,34 @@ Deno.test("random", async (t) => {
       const state = new Uint8Array(1);
 
       crypto.getRandomValues(data);
+      const copy = new Uint8Array(data);
       crypto.getRandomValues(key);
       crypto.getRandomValues(iv);
 
-      const [a] = ctr256Encrypt(data, key, iv, state);
-      const [b] = ctr256Decrypt(a, key, iv, state);
+      ctr256Encrypt(data, key, iv, state);
+      ctr256Decrypt(data, key, iv, state);
 
-      assertEquals(b, data);
+      assertEquals(copy, data);
     }
   });
 
   await t.step("decrypt encrypt", () => {
     for (let i = 0; i < ITERATION_COUNT; i++) {
       const data = new Uint8Array(DATA_SIZE);
+
       const key = new Uint8Array(KEY_SIZE);
       const iv = new Uint8Array(IV_SIZE);
       const state = new Uint8Array(1);
 
       crypto.getRandomValues(data);
+      const copy = new Uint8Array(data);
       crypto.getRandomValues(key);
       crypto.getRandomValues(iv);
 
-      const [a] = ctr256Encrypt(data, key, iv, state);
-      const [b] = ctr256Decrypt(a, key, iv, state);
+      ctr256Encrypt(data, key, iv, state);
+      ctr256Decrypt(data, key, iv, state);
 
-      assertEquals(b, data);
+      assertEquals(copy, data);
     }
   });
 });

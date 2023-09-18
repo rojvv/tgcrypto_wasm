@@ -61,8 +61,8 @@ export function ctr256Encrypt(
   key: Uint8Array,
   iv: Uint8Array,
   state: Uint8Array,
-): [Uint8Array, Uint8Array, Uint8Array] {
-  const r = module_.ctr256Encrypt(data, key, iv, state);
+): [Uint8Array, Uint8Array] {
+  const r = module_.ctr256Encrypt(data, data, key, iv, state);
   return r.map(collectVector);
 }
 
@@ -74,8 +74,8 @@ export function ctr256Decrypt(
   key: Uint8Array,
   iv: Uint8Array,
   state: Uint8Array,
-): [Uint8Array, Uint8Array, Uint8Array] {
-  const r = module_.ctr256Decrypt(data, key, iv, state);
+): [Uint8Array, Uint8Array] {
+  const r = module_.ctr256Decrypt(data, data, key, iv, state);
   return r.map(collectVector);
 }
 
@@ -91,7 +91,8 @@ export function cbc256Encrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return collectVector(module_.cbc256Encrypt(data, key, iv));
+  module_.cbc256Encrypt(data, data, key, iv);
+  return data;
 }
 
 /**
@@ -106,7 +107,8 @@ export function cbc256Decrypt(
   key: Uint8Array,
   iv: Uint8Array,
 ): Uint8Array {
-  return collectVector(module_.cbc256Decrypt(data, key, iv));
+  module_.cbc256Decrypt(data, data, key, iv);
+  return data;
 }
 
 export function factorize(pq: bigint): [bigint, bigint] {
