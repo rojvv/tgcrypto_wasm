@@ -22,6 +22,10 @@ Deno.test("expectancy", () => {
     new Uint8Array(32),
   );
   assertEquals(actual, expected);
+  assertEquals(
+    new Uint8Array(32),
+    ige256Decrypt(expected, new Uint8Array(32), new Uint8Array(32)),
+  );
 });
 
 Deno.test("random", async (t) => {
