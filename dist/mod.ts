@@ -126,10 +126,10 @@ export function ctr256(
     "pointer",
     "pointer",
   ], [datap, data.length, keyp, ivp, statep]);
-  data.set(module_.HEAPU8.slice(datap, datap+data.length));
-  key.set(module_.HEAPU8.slice(keyp, keyp+key.length));
-  iv.set(module_.HEAPU8.slice(ivp, ivp+iv.length));
-  state.set(module_.HEAPU8.slice(statep, statep+state.length));
+  data.set(module_.HEAPU8.slice(datap, datap + data.length));
+  key.set(module_.HEAPU8.slice(keyp, keyp + key.length));
+  iv.set(module_.HEAPU8.slice(ivp, ivp + iv.length));
+  state.set(module_.HEAPU8.slice(statep, statep + state.length));
   module_._free(datap);
   module_._free(keyp);
   module_._free(ivp);
@@ -172,7 +172,7 @@ export function cbc256Encrypt(
     iv,
   ]);
   try {
-    return module_.HEAPU8.slice(datap, datap+data.length);
+    return module_.HEAPU8.slice(datap, datap + data.length);
   } finally {
     module_._free(datap);
   }
@@ -200,7 +200,7 @@ export function cbc256Decrypt(
     iv,
   ]);
   try {
-    return module_.HEAPU8.slice(datap,datap+ data.length);
+    return module_.HEAPU8.slice(datap, datap + data.length);
   } finally {
     module_._free(datap);
   }

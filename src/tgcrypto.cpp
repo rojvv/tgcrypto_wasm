@@ -63,7 +63,6 @@ void ctr256(uint8_t in[], uint32_t length, const uint8_t key[32], uint8_t iv[16]
     tgcrypto_ctr256(in, length, key, iv, state);
 }
 
-
 EMSCRIPTEN_KEEPALIVE
 void cbc256_encrypt(uint8_t in[], uint32_t length, const uint8_t key[32], const uint8_t iv[16]) {
     tgcrypto_cbc256(in, length, key, iv, 1);
