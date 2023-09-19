@@ -1,4 +1,4 @@
-import { ctr256Decrypt, ctr256Encrypt, init } from "../dist/mod.ts";
+import { ctr256, init } from "../dist/mod.ts";
 import { assertEquals } from "./deps.ts";
 
 await init();
@@ -21,8 +21,8 @@ Deno.test("random", async (t) => {
       crypto.getRandomValues(key);
       crypto.getRandomValues(iv);
 
-      ctr256Encrypt(data, key, iv, state);
-      ctr256Decrypt(data, key, iv, state);
+      ctr256(data, key, iv, state);
+      ctr256(data, key, iv, state);
 
       assertEquals(copy, data);
     }
@@ -41,8 +41,8 @@ Deno.test("random", async (t) => {
       crypto.getRandomValues(key);
       crypto.getRandomValues(iv);
 
-      ctr256Encrypt(data, key, iv, state);
-      ctr256Decrypt(data, key, iv, state);
+      ctr256(data, key, iv, state);
+      ctr256(data, key, iv, state);
 
       assertEquals(copy, data);
     }
