@@ -8,6 +8,22 @@ const KEY_SIZE = 32;
 const IV_SIZE = 16;
 const ITERATION_COUNT = 500;
 
+Deno.test("expectancy", () => {
+  // deno-fmt-ignore
+  const expected =new Uint8Array([
+    220, 149, 192, 120, 162,  64, 137, 137,
+    173,  72, 162,  20, 146, 132,  32, 135,
+      8, 195, 116, 132, 140,  34, 130,  51,
+    194, 179,  79,  51,  43, 210, 233, 211
+  ]);
+  const actual = cbc256Encrypt(
+    new Uint8Array(32),
+    new Uint8Array(32),
+    new Uint8Array(16),
+  );
+  assertEquals(actual, expected);
+});
+
 Deno.test("random", async (t) => {
   await t.step("encrypt decrypt", () => {
     for (let i = 0; i < ITERATION_COUNT; i++) {

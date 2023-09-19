@@ -8,6 +8,35 @@ const KEY_SIZE = 32;
 const IV_SIZE = 16;
 const ITERATION_COUNT = 500;
 
+Deno.test("expectancy", () => {
+  const data = new Uint8Array(32);
+  const key = new Uint8Array(32);
+  const iv = new Uint8Array(16);
+  const state = new Uint8Array(1);
+
+  ctr256(data, key, iv, state);
+
+  // deno-fmt-ignore
+  const expectedIv = new Uint8Array([
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 2
+  ]);
+  const expectedState = new Uint8Array(1);
+  // deno-fmt-ignore
+  const expectedData = new Uint8Array([
+    220, 149, 192, 120, 162,  64, 137,
+    137, 173,  72, 162,  20, 146, 132,
+    32, 135,  83,  15, 138, 251, 199,
+    69,  54, 185, 169,  99, 180, 241,
+    196, 203, 115, 139
+  ]);
+
+  assertEquals(iv, expectedIv);
+  assertEquals(state, expectedState);
+  assertEquals(data, expectedData);
+});
+
 Deno.test("random", async (t) => {
   await t.step("encrypt decrypt", () => {
     for (let i = 0; i < ITERATION_COUNT; i++) {
