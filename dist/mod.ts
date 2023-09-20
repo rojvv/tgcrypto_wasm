@@ -36,13 +36,12 @@ export function ige256Encrypt(
 ): Uint8Array {
   checkIgeParams(data, key, iv);
   const out = module_._malloc(1024);
-  module_.ccall("ige256_encrypt", "void", [
-    "array",
-    "pointer",
-    "number",
-    "array",
-    "array",
-  ], [data, out, data.length, key, iv]);
+  module_.ccall(
+    "ige256_encrypt",
+    "void",
+    ["array", "pointer", "number", "array", "array"],
+    [data, out, data.length, key, iv],
+  );
   try {
     return module_.HEAPU8.slice(out, out + data.length);
   } finally {
@@ -64,13 +63,12 @@ export function ige256Decrypt(
 ): Uint8Array {
   checkIgeParams(data, key, iv);
   const out = module_._malloc(1024);
-  module_.ccall("ige256_decrypt", "void", [
-    "array",
-    "pointer",
-    "number",
-    "array",
-    "array",
-  ], [data, out, data.length, key, iv]);
+  module_.ccall(
+    "ige256_decrypt",
+    "void",
+    ["array", "pointer", "number", "array", "array"],
+    [data, out, data.length, key, iv],
+  );
   try {
     return module_.HEAPU8.slice(out, out + data.length);
   } finally {
@@ -119,13 +117,7 @@ export function ctr256(
 
   module_.ccall(
     "ctr256",
-    [
-      "pointer",
-      "number",
-      "array",
-      "pointer",
-      "pointer",
-    ],
+    ["pointer", "number", "array", "pointer", "pointer"],
     "void",
     [datap, data.length, key, ivp, statep],
   );
@@ -170,12 +162,7 @@ export function cbc256Encrypt(
     "cbc256_encrypt",
     ["pointer", "number", "array", "array"],
     "void",
-    [
-      datap,
-      data.length,
-      key,
-      iv,
-    ],
+    [datap, data.length, key, iv],
   );
   try {
     return module_.HEAPU8.slice(datap, datap + data.length);
@@ -203,12 +190,7 @@ export function cbc256Decrypt(
     "cbc256_decrypt",
     ["pointer", "number", "array", "array"],
     "void",
-    [
-      datap,
-      data.length,
-      key,
-      iv,
-    ],
+    [datap, data.length, key, iv],
   );
   try {
     return module_.HEAPU8.slice(datap, datap + data.length);
