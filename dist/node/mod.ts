@@ -112,8 +112,6 @@ export function ctr256(
   checkCtrParams(data, key, iv, state);
   const datap = module_._malloc(data.length);
   module_.HEAPU8.set(data, datap);
-  const keyp = module_._malloc(key.length);
-  module_.HEAPU8.set(key, keyp);
   const ivp = module_._malloc(iv.length);
   module_.HEAPU8.set(iv, ivp);
   const statep = module_._malloc(state.length);
@@ -122,16 +120,14 @@ export function ctr256(
   module_.ccall("ctr256", [
     "pointer",
     "number",
+    "array",
     "pointer",
     "pointer",
-    "pointer",
-  ], [datap, data.length, keyp, ivp, statep]);
+  ], [datap, data.length, key, ivp, statep]);
   data.set(module_.HEAPU8.slice(datap, datap + data.length));
-  key.set(module_.HEAPU8.slice(keyp, keyp + key.length));
   iv.set(module_.HEAPU8.slice(ivp, ivp + iv.length));
   state.set(module_.HEAPU8.slice(statep, statep + state.length));
   module_._free(datap);
-  module_._free(keyp);
   module_._free(ivp);
   module_._free(statep);
 }
