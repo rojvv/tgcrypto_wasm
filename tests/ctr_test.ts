@@ -83,16 +83,21 @@ Deno.test("testdata", () => {
   for (
     const [key_, cases] of Object.entries(testdata) as [
       string,
-      { data: string; iv: string; state: string }[],
+      [
+        { data: string; iv: string; state: string },
+        { data: string; iv: string; state: string },
+      ][],
     ][]
   ) {
     const key = decodeHex(key_);
-    const iv = decodeHex(cases[0].iv);
-    const state = decodeHex(cases[0].state);
-    for (const { data, iv: iv_, state: state_ } of cases) {
-      assertEquals(decodeHex(iv_), iv);
-      assertEquals(decodeHex(state_), state);
-      ctr256(decodeHex(data), key, iv, state);
+    for (const [in_, expected] of cases) {
+      const data = decodeHex(in_.data);
+      const iv = decodeHex(in_.iv);
+      const state = decodeHex(in_.state);
+      ctr256(data, key, iv, state);
+      assertEquals(data, decodeHex(expected.data));
+      assertEquals(iv, decodeHex(expected.iv));
+      assertEquals(state, decodeHex(expected.state));
     }
   }
 });
