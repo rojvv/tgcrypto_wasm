@@ -117,8 +117,8 @@ export function ctr256(
 
   module_.ccall(
     "ctr256",
-    ["pointer", "number", "array", "pointer", "pointer"],
     "void",
+    ["pointer", "number", "array", "pointer", "pointer"],
     [datap, data.length, key, ivp, statep],
   );
   data.set(module_.HEAPU8.slice(datap, datap + data.length));
@@ -129,75 +129,75 @@ export function ctr256(
   module_._free(statep);
 }
 
-// function checkCbcParams(data: Uint8Array, key: Uint8Array, iv: Uint8Array) {
-//   if (data.length == 0) {
-//     throw new TypeError("data must not be empty");
-//   } else if (data.length % 16 != 0) {
-//     throw new TypeError(
-//       "data must consist of a number of bytes that is divisible by 16",
-//     );
-//   } else if (key.length != 32) {
-//     throw new TypeError("key must be 32 bytes");
-//   } else if (iv.length != 16) {
-//     throw new TypeError("iv must be 16 bytes");
-//   }
-// }
+function checkCbcParams(data: Uint8Array, key: Uint8Array, iv: Uint8Array) {
+  if (data.length == 0) {
+    throw new TypeError("data must not be empty");
+  } else if (data.length % 16 != 0) {
+    throw new TypeError(
+      "data must consist of a number of bytes that is divisible by 16",
+    );
+  } else if (key.length != 32) {
+    throw new TypeError("key must be 32 bytes");
+  } else if (iv.length != 16) {
+    throw new TypeError("iv must be 16 bytes");
+  }
+}
 
-// /**
-//  * Performs CBC-256 encryption.
-//  *
-//  * @param data The unencrypted data, larger than a byte, divisible by 16
-//  * @param key 32-byte encryption key
-//  * @param iv 16-byte initialization vector
-//  */
-// export function cbc256Encrypt(
-//   data: Uint8Array,
-//   key: Uint8Array,
-//   iv: Uint8Array,
-// ): Uint8Array {
-//   checkCbcParams(data, key, iv);
-//   const datap = module_._malloc(data.length);
-//   module_.HEAPU8.set(data, datap);
-//   module_.ccall(
-//     "cbc256_encrypt",
-//     ["pointer", "number", "array", "array"],
-//     "void",
-//     [datap, data.length, key, iv],
-//   );
-//   try {
-//     return module_.HEAPU8.slice(datap, datap + data.length);
-//   } finally {
-//     module_._free(datap);
-//   }
-// }
+/**
+ * Performs CBC-256 encryption.
+ *
+ * @param data The unencrypted data, larger than a byte, divisible by 16
+ * @param key 32-byte encryption key
+ * @param iv 16-byte initialization vector
+ */
+export function cbc256Encrypt(
+  data: Uint8Array,
+  key: Uint8Array,
+  iv: Uint8Array,
+): Uint8Array {
+  checkCbcParams(data, key, iv);
+  const datap = module_._malloc(data.length);
+  module_.HEAPU8.set(data, datap);
+  module_.ccall(
+    "cbc256_encrypt",
+    "void",
+    ["pointer", "number", "array", "array"],
+    [datap, data.length, key, iv],
+  );
+  try {
+    return module_.HEAPU8.slice(datap, datap + data.length);
+  } finally {
+    module_._free(datap);
+  }
+}
 
-// /**
-//  * Performs CBC-256 decryption.
-//  *
-//  * @param data The encrypted data, larger than a byte, divisible by 16
-//  * @param key 32-byte encryption key
-//  * @param iv 16-byte initialization vector
-//  */
-// export function cbc256Decrypt(
-//   data: Uint8Array,
-//   key: Uint8Array,
-//   iv: Uint8Array,
-// ): Uint8Array {
-//   checkCbcParams(data, key, iv);
-//   const datap = module_._malloc(data.length);
-//   module_.HEAPU8.set(data, datap);
-//   module_.ccall(
-//     "cbc256_decrypt",
-//     ["pointer", "number", "array", "array"],
-//     "void",
-//     [datap, data.length, key, iv],
-//   );
-//   try {
-//     return module_.HEAPU8.slice(datap, datap + data.length);
-//   } finally {
-//     module_._free(datap);
-//   }
-// }
+/**
+ * Performs CBC-256 decryption.
+ *
+ * @param data The encrypted data, larger than a byte, divisible by 16
+ * @param key 32-byte encryption key
+ * @param iv 16-byte initialization vector
+ */
+export function cbc256Decrypt(
+  data: Uint8Array,
+  key: Uint8Array,
+  iv: Uint8Array,
+): Uint8Array {
+  checkCbcParams(data, key, iv);
+  const datap = module_._malloc(data.length);
+  module_.HEAPU8.set(data, datap);
+  module_.ccall(
+    "cbc256_decrypt",
+    "void",
+    ["pointer", "number", "array", "array"],
+    [datap, data.length, key, iv],
+  );
+  try {
+    return module_.HEAPU8.slice(datap, datap + data.length);
+  } finally {
+    module_._free(datap);
+  }
+}
 
 export function factorize(pq: bigint): [bigint, bigint] {
   const pqp = module_._malloc(16);
