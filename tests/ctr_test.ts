@@ -1,5 +1,6 @@
 import { ctr256, init } from "../dist/mod.ts";
-import { assertEquals } from "./deps.ts";
+import { assertEquals, decodeHex } from "./deps.ts";
+import testdata from "../testdata/ctr.json" assert { type: "json" };
 
 await init();
 
@@ -76,4 +77,22 @@ Deno.test("random", async (t) => {
       assertEquals(copy, data);
     }
   });
+});
+
+Deno.test("testdata", () => {
+  for (
+    const [key_, cases] of Object.entries(testdata) as [
+      string,
+      { data: string; iv: string; state: string }[],
+    ][]
+  ) {
+    const key = decodeHex(key_);
+    const iv = decodeHex(cases[0].iv);
+    const state = decodeHex(cases[0].state);
+    for (const { data, iv: iv_, state: state_ } of cases) {
+      assertEquals(decodeHex(iv_), iv);
+      assertEquals(decodeHex(state_), state);
+      ctr256(decodeHex(data), key, iv, state);
+    }
+  }
 });
