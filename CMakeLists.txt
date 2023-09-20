@@ -7,8 +7,8 @@ file(GLOB TGCRYPTO_SOURCES third_party/tgcrypto/tgcrypto/*256.c)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
 
-add_executable(tgcrypto ${TGCRYPTO_SOURCES} src/tgcrypto.cpp)
-add_executable(tgcrypto-node ${TGCRYPTO_SOURCES} src/tgcrypto.cpp)
+add_executable(tgcrypto ${TGCRYPTO_SOURCES} src/tgcrypto.c)
+add_executable(tgcrypto-node ${TGCRYPTO_SOURCES} src/tgcrypto.c)
 set_target_properties(
     tgcrypto
     PROPERTIES

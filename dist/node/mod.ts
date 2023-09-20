@@ -200,6 +200,12 @@ export function cbc256Decrypt(
 }
 
 export function factorize(pq: bigint): [bigint, bigint] {
-  const vector = module_.factorize(pq);
-  return [vector.get(0), vector.get(1)];
+  const pqp = module_._malloc(16);
+  module_.ccall("factorize", "void", ["number", "pointer"], [pq, pqp]);
+  try {
+    const pqp_ = module_.HEAP64.slice(pqp / 8, pqp / 8 + 2);
+    return [pqp_[0], pqp_[1]];
+  } finally {
+    module_._free(pqp);
+  }
 }
