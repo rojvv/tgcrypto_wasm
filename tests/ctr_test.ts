@@ -50,8 +50,8 @@ Deno.test("random", async (t) => {
       crypto.getRandomValues(key);
       crypto.getRandomValues(iv);
 
-      ctr256(data, key, iv, state);
-      ctr256(data, key, iv, state);
+      ctr256(data, key, new Uint8Array(iv), new Uint8Array(state));
+      ctr256(data, key, new Uint8Array(iv), new Uint8Array(state));
 
       assertEquals(copy, data);
     }
@@ -70,8 +70,8 @@ Deno.test("random", async (t) => {
       crypto.getRandomValues(key);
       crypto.getRandomValues(iv);
 
-      ctr256(data, key, iv, state);
-      ctr256(data, key, iv, state);
+      ctr256(data, key, new Uint8Array(iv), new Uint8Array(state));
+      ctr256(data, key, new Uint8Array(iv), new Uint8Array(state));
 
       assertEquals(copy, data);
     }
