@@ -35,7 +35,7 @@ export function ige256Encrypt(
   iv: Uint8Array,
 ): Uint8Array {
   checkIgeParams(data, key, iv);
-  const out = module_._malloc(1024);
+  const out = module_._malloc(data.length);
   module_.ccall(
     "ige256_encrypt",
     "void",
@@ -62,7 +62,7 @@ export function ige256Decrypt(
   iv: Uint8Array,
 ): Uint8Array {
   checkIgeParams(data, key, iv);
-  const out = module_._malloc(1024);
+  const out = module_._malloc(data.length);
   module_.ccall(
     "ige256_decrypt",
     "void",
