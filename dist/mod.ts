@@ -36,16 +36,19 @@ export function ige256Encrypt(
 ): Uint8Array {
   checkIgeParams(data, key, iv);
   const out = module_._malloc(data.length);
+  const datap = module_._malloc(data.length);
+  module_.HEAPU8.set(data, datap);
   module_.ccall(
     "ige256_encrypt",
     "void",
-    ["array", "pointer", "number", "array", "array"],
-    [data, out, data.length, key, iv],
+    ["pointer", "pointer", "number", "array", "array"],
+    [datap, out, data.length, key, iv],
   );
   try {
     return module_.HEAPU8.slice(out, out + data.length);
   } finally {
     module_._free(out);
+    module_._free(datap);
   }
 }
 
@@ -63,16 +66,19 @@ export function ige256Decrypt(
 ): Uint8Array {
   checkIgeParams(data, key, iv);
   const out = module_._malloc(data.length);
+  const datap = module_._malloc(data.length);
+  module_.HEAPU8.set(data, datap);
   module_.ccall(
     "ige256_decrypt",
     "void",
-    ["array", "pointer", "number", "array", "array"],
-    [data, out, data.length, key, iv],
+    ["pointer", "pointer", "number", "array", "array"],
+    [datap, out, data.length, key, iv],
   );
   try {
     return module_.HEAPU8.slice(out, out + data.length);
   } finally {
     module_._free(out);
+    module_._free(datap);
   }
 }
 
