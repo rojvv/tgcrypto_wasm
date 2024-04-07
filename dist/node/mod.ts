@@ -204,14 +204,3 @@ export function cbc256Decrypt(
     module_._free(datap);
   }
 }
-
-export function factorize(pq: bigint): [bigint, bigint] {
-  const pqp = module_._malloc(16);
-  module_.ccall("factorize", "void", ["number", "pointer"], [pq, pqp]);
-  try {
-    const pqp_ = module_.HEAP64.slice(pqp / 8, pqp / 8 + 2);
-    return [pqp_[0], pqp_[1]];
-  } finally {
-    module_._free(pqp);
-  }
-}
