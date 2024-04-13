@@ -9,15 +9,15 @@ export async function init() {
 }
 
 function checkIgeParams(data: Uint8Array, key: Uint8Array, iv: Uint8Array) {
-  if (data.length == 0) {
+  if (data.byteLength == 0) {
     throw new TypeError("data must not be empty");
-  } else if (data.length % 16 != 0) {
+  } else if (data.byteLength % 16 != 0) {
     throw new TypeError(
       "data must consist of a number of bytes that is divisible by 16",
     );
-  } else if (key.length != 32) {
+  } else if (key.byteLength != 32) {
     throw new TypeError("key must be 32 bytes");
-  } else if (iv.length != 32) {
+  } else if (iv.byteLength != 32) {
     throw new TypeError("iv must be 32 bytes");
   }
 }
@@ -35,17 +35,17 @@ export function ige256Encrypt(
   iv: Uint8Array,
 ): Uint8Array {
   checkIgeParams(data, key, iv);
-  const out = module_._malloc(data.length);
-  const datap = module_._malloc(data.length);
+  const out = module_._malloc(data.byteLength);
+  const datap = module_._malloc(data.byteLength);
   module_.HEAPU8.set(data, datap);
   module_.ccall(
     "ige256_encrypt",
     "void",
     ["pointer", "pointer", "number", "array", "array"],
-    [datap, out, data.length, key, iv],
+    [datap, out, data.byteLength, key, iv],
   );
   try {
-    return module_.HEAPU8.slice(out, out + data.length);
+    return module_.HEAPU8.slice(out, out + data.byteLength);
   } finally {
     module_._free(out);
     module_._free(datap);
@@ -65,17 +65,17 @@ export function ige256Decrypt(
   iv: Uint8Array,
 ): Uint8Array {
   checkIgeParams(data, key, iv);
-  const out = module_._malloc(data.length);
-  const datap = module_._malloc(data.length);
+  const out = module_._malloc(data.byteLength);
+  const datap = module_._malloc(data.byteLength);
   module_.HEAPU8.set(data, datap);
   module_.ccall(
     "ige256_decrypt",
     "void",
     ["pointer", "pointer", "number", "array", "array"],
-    [datap, out, data.length, key, iv],
+    [datap, out, data.byteLength, key, iv],
   );
   try {
-    return module_.HEAPU8.slice(out, out + data.length);
+    return module_.HEAPU8.slice(out, out + data.byteLength);
   } finally {
     module_._free(out);
     module_._free(datap);
@@ -85,18 +85,52 @@ export function ige256Decrypt(
 function checkCtrParams(
   data: Uint8Array,
   key: Uint8Array,
-  iv: Uint8Array,
-  state: Uint8Array,
 ) {
-  if (data.length == 0) {
+  if (data.byteLength == 0) {
     throw new TypeError("data must not be empty");
-  } else if (key.length != 32) {
+  } else if (key.byteLength != 32) {
     throw new TypeError("key must be 32 bytes");
-  } else if (iv.length != 16) {
-    throw new TypeError("iv must be 16 bytes");
-  } else if (state.length != 1) {
-    throw new TypeError("state must be 1 byte");
   }
+}
+
+export interface Ctr256State {
+  statep: number;
+  ivp: number;
+}
+export function createCtr256State(iv: Uint8Array): Ctr256State {
+  if (iv.byteLength != 16) {
+    throw new TypeError("iv must be 16 bytes");
+  }
+  const state = {
+    ivp: module_._malloc(16),
+    statep: module_._malloc(1),
+  };
+  module_.HEAPU8.set(iv, state.ivp);
+  module_.HEAPU8[state.statep] = 0
+  return state;
+}
+export function destroyCtr256State(state: Ctr256State) {
+  module_._free(state.ivp);
+  module_._free(state.statep);
+}
+export interface __Ctr256StateValues {
+  iv: Uint8Array;
+  state: Uint8Array;
+}
+export function __getCtr256StateValues(
+  state: Ctr256State,
+): __Ctr256StateValues {
+  return {
+    iv: module_.HEAPU8.slice(state.ivp, state.ivp + 16),
+    state: module_.HEAPU8.slice(state.statep, state.statep + 1),
+  };
+}
+export function __settCtr256StateState(state: Ctr256State, state_: Uint8Array) {
+  if (state_.byteLength != 1) {
+    throw new Error("state_ must be 1 byte");
+  }
+
+  module_.HEAPU8.set(state_, state.statep);
 }
 
 /**
@@ -105,46 +139,37 @@ function checkCtrParams(
  * @param data The data, larger than a byte
  * @param key 32-byte encryption key
  * @param iv 16-byte initialization vector
- * @param state 1-byte state
+ * @param state Result of `createCtr256State()`
  */
 export function ctr256(
   data: Uint8Array,
   key: Uint8Array,
-  iv: Uint8Array,
-  state: Uint8Array,
+  state: Ctr256State,
 ) {
-  checkCtrParams(data, key, iv, state);
-  const datap = module_._malloc(data.length);
+  checkCtrParams(data, key);
+  const datap = module_._malloc(data.byteLength);
   module_.HEAPU8.set(data, datap);
-  const ivp = module_._malloc(iv.length);
-  module_.HEAPU8.set(iv, ivp);
-  const statep = module_._malloc(state.length);
-  module_.HEAPU8.set(state, statep);
 
   module_.ccall(
     "ctr256",
     "void",
     ["pointer", "number", "array", "pointer", "pointer"],
-    [datap, data.length, key, ivp, statep],
+    [datap, data.byteLength, key, state.ivp, state.statep],
   );
-  data.set(module_.HEAPU8.slice(datap, datap + data.length));
-  iv.set(module_.HEAPU8.slice(ivp, ivp + iv.length));
-  state.set(module_.HEAPU8.slice(statep, statep + state.length));
+  data.set(module_.HEAPU8.slice(datap, datap + data.byteLength));
   module_._free(datap);
-  module_._free(ivp);
-  module_._free(statep);
 }
 
 function checkCbcParams(data: Uint8Array, key: Uint8Array, iv: Uint8Array) {
-  if (data.length == 0) {
+  if (data.byteLength == 0) {
     throw new TypeError("data must not be empty");
-  } else if (data.length % 16 != 0) {
+  } else if (data.byteLength % 16 != 0) {
     throw new TypeError(
       "data must consist of a number of bytes that is divisible by 16",
     );
-  } else if (key.length != 32) {
+  } else if (key.byteLength != 32) {
     throw new TypeError("key must be 32 bytes");
-  } else if (iv.length != 16) {
+  } else if (iv.byteLength != 16) {
     throw new TypeError("iv must be 16 bytes");
   }
 }
@@ -162,16 +187,16 @@ export function cbc256Encrypt(
   iv: Uint8Array,
 ): Uint8Array {
   checkCbcParams(data, key, iv);
-  const datap = module_._malloc(data.length);
+  const datap = module_._malloc(data.byteLength);
   module_.HEAPU8.set(data, datap);
   module_.ccall(
     "cbc256_encrypt",
     "void",
     ["pointer", "number", "array", "array"],
-    [datap, data.length, key, iv],
+    [datap, data.byteLength, key, iv],
   );
   try {
-    return module_.HEAPU8.slice(datap, datap + data.length);
+    return module_.HEAPU8.slice(datap, datap + data.byteLength);
   } finally {
     module_._free(datap);
   }
@@ -190,16 +215,16 @@ export function cbc256Decrypt(
   iv: Uint8Array,
 ): Uint8Array {
   checkCbcParams(data, key, iv);
-  const datap = module_._malloc(data.length);
+  const datap = module_._malloc(data.byteLength);
   module_.HEAPU8.set(data, datap);
   module_.ccall(
     "cbc256_decrypt",
     "void",
     ["pointer", "number", "array", "array"],
-    [datap, data.length, key, iv],
+    [datap, data.byteLength, key, iv],
   );
   try {
-    return module_.HEAPU8.slice(datap, datap + data.length);
+    return module_.HEAPU8.slice(datap, datap + data.byteLength);
   } finally {
     module_._free(datap);
   }
