@@ -8,5 +8,8 @@
   },
   "fmt": {
     "include": ["dist/mod.ts", "dist/node/mod.ts", "tests/"]
+  },
+  "publish": {
+    "include": ["dist/", "LICENSE"]
   }
 }
