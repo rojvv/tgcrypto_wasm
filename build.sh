@@ -1,5 +1,4 @@
-source ~/emsdk/emsdk_env.sh 2>/dev/null
-emmake cmake .
-emmake cmake --build .
-mv dist/node/tgcrypto-node.js dist/node/tgcrypto.js
+#!/bin/bash
+docker build -t tgcrypto_wasm . &&
+docker run -it --rm -v .:/build tgcrypto_wasm &&
 deno fmt
