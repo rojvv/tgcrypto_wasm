@@ -33,7 +33,7 @@ export function ige256Encrypt(
   data: Uint8Array,
   key: Uint8Array,
   iv: Uint8Array,
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   checkIgeParams(data, key, iv);
   const out = module_._malloc(data.byteLength);
   const datap = module_._malloc(data.byteLength);
@@ -63,7 +63,7 @@ export function ige256Decrypt(
   data: Uint8Array,
   key: Uint8Array,
   iv: Uint8Array,
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   checkIgeParams(data, key, iv);
   const out = module_._malloc(data.byteLength);
   const datap = module_._malloc(data.byteLength);
