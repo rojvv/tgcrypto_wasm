@@ -1,11 +1,15 @@
 {
   "lock": false,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "name": "@roj/tgcrypto",
   "license": "LGPL-3.0-or-later",
   "exports": "./dist/mod.ts",
+  "tasks": {
+    "bench": "deno bench benchmarks/ige_bench.ts",
+    "test": "deno test tests/"
+  },
   "fmt": {
-    "include": ["dist/mod.ts", "tests/"]
+    "include": ["benchmarks/", "dist/mod.ts", "tests/"]
   },
   "publish": {
     "include": ["dist/", "LICENSE"]
