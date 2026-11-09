@@ -18,4 +18,13 @@ jobs:
 
       - uses: denoland/setup-deno@v2
 
-      - run: deno publish
+      - working-directory: dist
+        run: |
+          rm -f mod.ts tgcrypto.js tgcrypto.wat
+          mv mod_optimized.ts mod.ts
+          mv tgcrypto_optimized.js tgcrypto.js
+          mv tgcrypto_optimized.wat tgcrypto.wat
+          sed 's/tgcrypto_optimized\.js/tgcrypto.js/' mod.ts > mod.ts.tmp
+          mv mod.ts.tmp mod.ts
+
+      - run: deno publish --allow-dirty
